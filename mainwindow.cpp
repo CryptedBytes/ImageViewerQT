@@ -3,6 +3,14 @@
 #include <QPixmap>
 #include <QFileDialog>
 #include <iostream>
+#include <QScroller>
+
+
+
+QLabel *hellolabel;
+int stage = 0;
+QString imgpath;
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -13,16 +21,53 @@ MainWindow::MainWindow(QWidget *parent)
   ui->hellolabel->setText("");
 
 
+      QScroller::grabGesture(ui->scrollArea->viewport(),QScroller::LeftMouseButtonGesture);
+
+  QStringList arguments = qApp->arguments();
+  if(arguments.size() > 1){
+
+
+      QFile file("args.txt");
+
+      if(file.open(QIODevice::WriteOnly | QIODevice::Text)) { //clear the file
+
+
+         file.write("");
+      }
+      file.close();
+
+
+
+        for(int i = 0; i < arguments.size(); i++){
+            qDebug() << "\niterating argument #" << i << ":" << arguments[i] << "\n";
+
+            if(arguments[i].contains("png")){
+                imgpath = arguments[i].toUtf8();
+                 QPixmap pix(imgpath);
+                  ui->img->setPixmap(pix.scaled(1000,1000, Qt::KeepAspectRatioByExpanding));
+            }
+
+
+               if(file.open(QIODevice::WriteOnly | QIODevice::Append)) {
+
+
+                  file.write(arguments[i].toUtf8() + "\n");
+                  if(imgpath.size() > 2) file.write("\nFOUND IMG IN ARGS: "+ imgpath.toUtf8() + "\n");
+               }
+               file.close();
+        }
+  }
 
 }
 
-QLabel *hellolabel;
-int stage = 0;
+
 
 MainWindow::~MainWindow()
 {
 
     delete ui;
+
+
 
 }
 
@@ -32,6 +77,8 @@ void MainWindow::resizeEvent(QResizeEvent *event){
       QWidget::resizeEvent(event);
 
       ui->img->resize(ui->centralwidget->size());
+      ui->scrollArea->resize(ui->centralwidget->size());
+     ui->scrollAreaWidgetContents->resize(ui->img->size());
 
 }
 
