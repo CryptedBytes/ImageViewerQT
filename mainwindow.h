@@ -29,6 +29,7 @@ protected:
 
 private:
     Ui::MainWindow *ui;
+    void updateWindowTitle();
 };
 
 #endif // MAINWINDOW_H

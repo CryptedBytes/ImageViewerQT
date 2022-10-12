@@ -55,6 +55,7 @@ MainWindow::MainWindow(QWidget *parent)
                   if(imgpath.size() > 2) file.write("\nFOUND IMG IN ARGS: "+ imgpath.toUtf8() + "\n");
                }
                file.close();
+               this->setWindowTitle(imgpath);
         }
   }
 
@@ -112,6 +113,13 @@ void MainWindow::on_pushButton_clicked()
 }
 
 
+void MainWindow::updateWindowTitle(){
+    QString windowtitle;
+    windowtitle = imgpath.last(imgpath.length() - imgpath.lastIndexOf('/', -1) - 1);
+    //qDebug() << imgpath.lastIndexOf('/', -1) << ", " << imgpath;
+    this->setWindowTitle(windowtitle);
+}
+
 void MainWindow::on_imgPickBtn_clicked()
 {
     QFileDialog fidi;
@@ -119,11 +127,17 @@ void MainWindow::on_imgPickBtn_clicked()
     fidi.exec();
     filePath = fidi.selectedFiles().first();
     qInfo() << filePath;
+    imgpath = filePath;
     //std::cout << "\ntest\n";
 
     QPixmap pix(filePath);
     ui->img->setPixmap(pix.scaled(1000,1000, Qt::KeepAspectRatioByExpanding));
 
+    updateWindowTitle();
+
+
+
+     qDebug() << "\nimgpath:" << imgpath << "\n";
 
 
 }
